@@ -5,6 +5,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import UserCard from "../../components/UserCard";
 import "./Tab1.css";
 
 export const Tab1: React.FC = () => {
@@ -21,6 +22,7 @@ export const Tab1: React.FC = () => {
             <IonTitle size="large">Tab 1</IonTitle>
           </IonToolbar>
         </IonHeader>
+        <UserCard />
       </IonContent>
     </IonPage>
   );

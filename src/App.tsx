@@ -1,6 +1,13 @@
-import { Redirect, Route } from "react-router-dom";
-import { IonApp } from "@ionic/react";
+import React from "react";
+import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import { IonApp, isPlatform } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import {
+  AuthConnectProvider,
+  PrivateRoute,
+} from "@ionic-enterprise/auth-react";
+import Tabs from "./pages/Tabs";
+import Login from "./pages/Login";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -20,17 +27,53 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import Tabs from "./pages/Tabs";
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <Route path="/tabs">
-        <Tabs />
-      </Route>
-      <Redirect from="/" to="/tabs" exact />
-    </IonReactRouter>
-  </IonApp>
-);
+const platform = isPlatform("capacitor") ? "capacitor" : "web";
+const redirectUri = isPlatform("capacitor")
+  ? "msauth://login"
+  : "http://localhost:8100/login";
+const logoutUrl = isPlatform("capacitor")
+  ? "msauth://login"
+  : "http://localhost:8100/login";
+
+const AuthConnectContainer: React.FC = () => {
+  const location = useLocation();
+  return (
+    <AuthConnectProvider
+      checkSessionOnChange={location.pathname}
+      loginPath="/login"
+      logLevel="DEBUG"
+      authConfig="auth0"
+      clientID="1XaS52xS0XDdE0NUYKEEnF047AC53USl"
+      discoveryUrl="https://dev-j3wl8n0b.auth0.com/.well-known/openid-configuration"
+      scope="openid offline_access email picture profile"
+      audience=""
+      redirectUri={redirectUri}
+      logoutUrl={logoutUrl}
+      platform={platform}
+      iosWebView="private"
+    >
+      <Switch>
+        <PrivateRoute path="/tabs">
+          <Tabs />
+        </PrivateRoute>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Redirect from="/" to="/login" exact />
+      </Switch>
+    </AuthConnectProvider>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <AuthConnectContainer />
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;
