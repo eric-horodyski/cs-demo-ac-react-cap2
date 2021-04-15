@@ -13,7 +13,7 @@ export class SessionVault extends IonicIdentityVaultUser<User> {
   private constructor() {
     super(
       { ready: () => Promise.resolve(true) },
-      { authMode: AuthMode.SecureStorage }
+      { authMode: AuthMode.PasscodeOnly, lockAfter: 300 }
     );
   }
 
