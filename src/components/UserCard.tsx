@@ -10,12 +10,7 @@ import {
   IonButton,
 } from "@ionic/react";
 import { useAuthConnect } from "@ionic-enterprise/auth-react";
-
-interface User {
-  name: string;
-  picture: string;
-  email: string;
-}
+import { User } from "../models/User";
 
 const UserCard: React.FC = () => {
   const {
