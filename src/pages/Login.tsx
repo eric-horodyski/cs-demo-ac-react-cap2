@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   IonContent,
   IonHeader,
@@ -9,26 +9,22 @@ import {
   useIonRouter,
 } from "@ionic/react";
 import { useAuthConnect } from "@ionic-enterprise/auth-react";
-import { useSessionVault } from "../vault/useSessionVault";
+import { SessionVaultContext } from "../vault/SessionVaultContext";
 
 const Login: React.FC = () => {
-  const { error } = useAuthConnect();
-  const { login, isAuthenticated, canUnlock } = useSessionVault();
+  const { error, isAuthenticated } = useAuthConnect();
+  const { login, canUnlock, isLocked, checkLockStatus, unlock } = useContext(
+    SessionVaultContext
+  );
   const router = useIonRouter();
 
-  const [unlock, setUnlock] = useState<boolean>(false);
-
   useEffect(() => {
-    (async () => {
-      (await canUnlock()) && setUnlock(true);
-    })();
+    checkLockStatus();
   }, []);
 
   useEffect(() => {
-    (async () => {
-      (await isAuthenticated()) && router.push("tabs/tab1", "none", "replace");
-    })();
-  }, [isAuthenticated, router]);
+    !isLocked && isAuthenticated && router.push("tabs/tab1", "none", "replace");
+  }, [isLocked, isAuthenticated, router]);
 
   return (
     <IonPage>
@@ -38,9 +34,18 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <p>Can We Unlock the Vault? {unlock.toString()}</p>
-        <IonButton expand="block" onClick={() => login()}>
-          Login
+        {canUnlock && (
+          <IonButton expand="block" onClick={() => unlock()}>
+            Unlock
+          </IonButton>
+        )}
+
+        <IonButton
+          expand="block"
+          onClick={() => login()}
+          fill={canUnlock ? "clear" : "solid"}
+        >
+          {canUnlock ? "Sign In Instead" : "Login"}
         </IonButton>
         {error && <p className="ion-padding">{JSON.stringify(error)}</p>}
       </IonContent>

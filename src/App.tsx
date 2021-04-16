@@ -29,6 +29,7 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import AuthConnectContainer from "./auth/AuthConnectContainer";
 import { SessionVaultProvider } from "./vault/SessionVaultContext";
+import { SessionRoute } from "./vault/SessionRoute";
 
 const App: React.FC = () => {
   return (
@@ -37,9 +38,9 @@ const App: React.FC = () => {
         <AuthConnectContainer>
           <SessionVaultProvider>
             <Switch>
-              <PrivateRoute path="/tabs">
+              <SessionRoute path="/tabs">
                 <Tabs />
-              </PrivateRoute>
+              </SessionRoute>
               <Route path="/login">
                 <Login />
               </Route>

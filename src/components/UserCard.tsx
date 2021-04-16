@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   IonCard,
   IonCardHeader,
@@ -11,11 +11,11 @@ import {
 } from "@ionic/react";
 import { useAuthConnect } from "@ionic-enterprise/auth-react";
 import { User } from "../models/User";
-import { useSessionVault } from "../vault/useSessionVault";
+import { SessionVaultContext } from "../vault/SessionVaultContext";
 
 const UserCard: React.FC = () => {
   const { accessToken, isAuthenticated, idToken } = useAuthConnect<User>();
-  const { logout } = useSessionVault();
+  const { logout, isLocked } = useContext(SessionVaultContext);
 
   return (
     <IonCard>
@@ -31,6 +31,7 @@ const UserCard: React.FC = () => {
             <h2>{idToken?.name}</h2>
             <p>{idToken?.email}</p>
             <p>Status: {isAuthenticated ? "Signed In" : "Signed Out"}</p>
+            <p>Vault: {isLocked ? "Locked" : "Unlocked"}</p>
             <p>Access Token: {accessToken}</p>
           </IonLabel>
         </IonItem>
