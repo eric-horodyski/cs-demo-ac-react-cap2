@@ -11,14 +11,11 @@ import {
 } from "@ionic/react";
 import { useAuthConnect } from "@ionic-enterprise/auth-react";
 import { User } from "../models/User";
+import { useSessionVault } from "../vault/useSessionVault";
 
 const UserCard: React.FC = () => {
-  const {
-    accessToken,
-    isAuthenticated,
-    idToken,
-    logout,
-  } = useAuthConnect<User>();
+  const { accessToken, isAuthenticated, idToken } = useAuthConnect<User>();
+  const { logout } = useSessionVault();
 
   return (
     <IonCard>

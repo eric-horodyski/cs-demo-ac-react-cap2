@@ -27,52 +27,26 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import { SessionVault } from "./vault/SessionVault";
-
-const platform = isPlatform("capacitor") ? "capacitor" : "web";
-const redirectUri = isPlatform("capacitor")
-  ? "msauth://login"
-  : "http://localhost:8100/login";
-const logoutUrl = isPlatform("capacitor")
-  ? "msauth://login"
-  : "http://localhost:8100/login";
-
-const AuthConnectContainer: React.FC = () => {
-  const location = useLocation();
-  return (
-    <AuthConnectProvider
-      checkSessionOnChange={location.pathname}
-      loginPath="/login"
-      logLevel="DEBUG"
-      authConfig="auth0"
-      clientID="1XaS52xS0XDdE0NUYKEEnF047AC53USl"
-      discoveryUrl="https://dev-j3wl8n0b.auth0.com/.well-known/openid-configuration"
-      scope="openid offline_access email picture profile"
-      audience=""
-      redirectUri={redirectUri}
-      logoutUrl={logoutUrl}
-      platform={platform}
-      iosWebView="private"
-      tokenStorageProvider={SessionVault.getInstance()}
-    >
-      <Switch>
-        <PrivateRoute path="/tabs">
-          <Tabs />
-        </PrivateRoute>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Redirect from="/" to="/login" exact />
-      </Switch>
-    </AuthConnectProvider>
-  );
-};
+import AuthConnectContainer from "./auth/AuthConnectContainer";
+import { SessionVaultProvider } from "./vault/SessionVaultContext";
 
 const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-        <AuthConnectContainer />
+        <AuthConnectContainer>
+          <SessionVaultProvider>
+            <Switch>
+              <PrivateRoute path="/tabs">
+                <Tabs />
+              </PrivateRoute>
+              <Route path="/login">
+                <Login />
+              </Route>
+              <Redirect from="/" to="/login" exact />
+            </Switch>
+          </SessionVaultProvider>
+        </AuthConnectContainer>
       </IonReactRouter>
     </IonApp>
   );

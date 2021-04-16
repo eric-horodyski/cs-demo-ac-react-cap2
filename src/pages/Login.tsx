@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IonContent,
   IonHeader,
@@ -9,13 +9,25 @@ import {
   useIonRouter,
 } from "@ionic/react";
 import { useAuthConnect } from "@ionic-enterprise/auth-react";
+import { useSessionVault } from "../vault/useSessionVault";
 
 const Login: React.FC = () => {
-  const { error, isAuthenticated, login } = useAuthConnect();
+  const { error } = useAuthConnect();
+  const { login, isAuthenticated, canUnlock } = useSessionVault();
   const router = useIonRouter();
 
+  const [unlock, setUnlock] = useState<boolean>(false);
+
   useEffect(() => {
-    isAuthenticated && router.push("tabs/tab1", "none", "replace");
+    (async () => {
+      (await canUnlock()) && setUnlock(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      (await isAuthenticated()) && router.push("tabs/tab1", "none", "replace");
+    })();
   }, [isAuthenticated, router]);
 
   return (
@@ -26,6 +38,7 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <p>Can We Unlock the Vault? {unlock.toString()}</p>
         <IonButton expand="block" onClick={() => login()}>
           Login
         </IonButton>
