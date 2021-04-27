@@ -4,7 +4,7 @@ import {
   LockEvent,
   VaultConfig,
 } from "@ionic-enterprise/identity-vault";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { SessionVault } from "./SessionVault";
 
 export const SessionVaultContext = createContext<{
@@ -28,9 +28,16 @@ export const SessionVaultProvider: React.FC = ({ children }) => {
   const {
     login: authConnectLogin,
     logout: authConnectLogout,
+    ionicAuth,
+    isAuthenticated,
   } = useAuthConnect();
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [canUnlock, setCanUnlock] = useState<boolean>(false);
+
+  useEffect(
+    () => console.log("E:useEffect::isAuthenticated", isAuthenticated),
+    [isAuthenticated]
+  );
 
   const login = async () => {
     await vault.logout();
@@ -68,7 +75,10 @@ export const SessionVaultProvider: React.FC = ({ children }) => {
     setIsLocked(true);
   };
 
-  vault.onVaultUnlocked = (config: VaultConfig) => {
+  vault.onVaultUnlocked = async (config: VaultConfig) => {
+    const x = await ionicAuth.isAuthenticated();
+    console.log("E:ionicAuth.isAuthenticated", x);
+    console.log("E:state:isAuthenticated", isAuthenticated);
     setIsLocked(false);
   };
 
