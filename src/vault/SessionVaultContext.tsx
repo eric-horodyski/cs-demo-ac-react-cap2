@@ -41,7 +41,7 @@ export const SessionVaultProvider: React.FC = ({ children }) => {
     [isAuthenticated]
   );
 
-  useEffect(() => console.log("E:Vault Context idToken", idToken));
+  useEffect(() => console.log("E:Vault Context idToken", idToken), [idToken]);
 
   const login = async () => {
     await vault.logout();
