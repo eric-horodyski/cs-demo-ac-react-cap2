@@ -28,16 +28,20 @@ export const SessionVaultProvider: React.FC = ({ children }) => {
   const {
     login: authConnectLogin,
     logout: authConnectLogout,
-    ionicAuth,
+    checkIsAuthenticated,
     isAuthenticated,
+    idToken,
   } = useAuthConnect();
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [canUnlock, setCanUnlock] = useState<boolean>(false);
 
   useEffect(
-    () => console.log("E:useEffect::isAuthenticated", isAuthenticated),
+    () =>
+      console.log("E: isAuthenticated Subscription Update", isAuthenticated),
     [isAuthenticated]
   );
+
+  useEffect(() => console.log("E:Vault Context idToken", idToken));
 
   const login = async () => {
     await vault.logout();
@@ -76,9 +80,7 @@ export const SessionVaultProvider: React.FC = ({ children }) => {
   };
 
   vault.onVaultUnlocked = async (config: VaultConfig) => {
-    const x = await ionicAuth.isAuthenticated();
-    console.log("E:ionicAuth.isAuthenticated", x);
-    console.log("E:state:isAuthenticated", isAuthenticated);
+    await checkIsAuthenticated();
     setIsLocked(false);
   };
 

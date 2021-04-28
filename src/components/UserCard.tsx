@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   IonCard,
   IonCardHeader,
@@ -16,6 +16,8 @@ import { SessionVaultContext } from "../vault/SessionVaultContext";
 const UserCard: React.FC = () => {
   const { accessToken, isAuthenticated, idToken } = useAuthConnect<User>();
   const { logout, isLocked } = useContext(SessionVaultContext);
+
+  useEffect(() => console.log("E: UserCard idToken", idToken), [idToken]);
 
   return (
     <IonCard>
